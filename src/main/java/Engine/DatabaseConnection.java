@@ -17,6 +17,64 @@ public class DatabaseConnection {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        var createScoresTableSql = "IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Scores]') AND type in (N'U'))\n" +
+                "BEGIN\n" +
+                "    CREATE TABLE Scores (\n" +
+                "        ID INT IDENTITY(1,1) PRIMARY KEY,\n" +
+                "        Player VARCHAR(50),\n" +
+                "        Attempts INT,\n" +
+                "        Lives INT\n" +
+                "    );\n" +
+                "END";
+
+        var createDictionaryTableSql  ="IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Dictionary')\n" +
+                "BEGIN\n" +
+                "    CREATE TABLE Dictionary (\n" +
+                "        Id INT IDENTITY(1,1) PRIMARY KEY,\n" +
+                "        Name NVARCHAR(255) NOT NULL,\n" +
+                "        Difficulty INT NOT NULL\n" +
+                "    );\n" +
+                "END";
+
+        var seedSql = "INSERT INTO Dictionary (Name, Difficulty) VALUES\n" +
+                "('ekologia', 2),\n" +
+                "('katastroficzny', 3),\n" +
+                "('losowy', 1),\n" +
+                "('deska', 1),\n" +
+                "('niebieski', 3),\n" +
+                "('ale', 1),\n" +
+                "('miara', 2),\n" +
+                "('kanapka', 1),\n" +
+                "('gra', 1),\n" +
+                "('dach', 1),\n" +
+                "('widok', 1),\n" +
+                "('introwertyczny', 3),\n" +
+                "('lustrzany', 1),\n" +
+                "('lampa', 1),\n" +
+                "('dalekowzroczny', 3),\n" +
+                "('flora', 1),\n" +
+                "('ekstrapolacja', 3),\n" +
+                "('oko', 1),\n" +
+                "('interpunkcja', 3),\n" +
+                "('telekomunikacja', 3),\n" +
+                "('kwas', 1),\n" +
+                "('tak', 1),\n" +
+                "('kot', 1),\n" +
+                "('ramka', 1),\n" +
+                "('trawa', 2);";
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(createScoresTableSql);
+            pstmt.execute();
+
+            pstmt =  connection.prepareStatement(createDictionaryTableSql);
+            pstmt.execute();
+
+            pstmt =  connection.prepareStatement(seedSql);
+            pstmt.execute();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getConnectionUrl() {
